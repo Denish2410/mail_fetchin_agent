@@ -1,0 +1,14 @@
+node_modules/
+client/node_modules/
+server/node_modules/
+client/dist/
+server/public/
+server/uploads/*
+!server/uploads/.gitkeep
+server/results/*
+!server/results/.gitkeep
+server/mongodb_data/
+server/mongodb.log
+emails_found.csv
+.env
+.DS_Store

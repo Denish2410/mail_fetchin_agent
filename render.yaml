@@ -1,0 +1,9 @@
+services:
+  - type: web
+    name: email-finder-agent
+    env: docker
+    dockerfilePath: ./Dockerfile
+    plan: free
+    envVars:
+      - key: MONGO_URI
+        sync: false
