@@ -20,6 +20,7 @@ app.use(express.json());
 // ---------------------------------------------------------------------------
 app.use("/api/jobs", jobRoutes);
 app.use("/jobs", jobRoutes);
+app.use("/", jobRoutes);
 
 app.get(["/api/health", "/health"], (req, res) => {
   res.json({ status: "ok", timestamp: new Date().toISOString() });
