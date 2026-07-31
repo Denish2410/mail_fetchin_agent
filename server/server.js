@@ -19,10 +19,8 @@ app.use(express.json());
 // Routes
 // ---------------------------------------------------------------------------
 app.use("/api/jobs", jobRoutes);
-app.use("/jobs", jobRoutes);
-app.use("/", jobRoutes);
 
-app.get(["/api/health", "/health"], (req, res) => {
+app.get("/api/health", (req, res) => {
   res.json({ status: "ok", timestamp: new Date().toISOString() });
 });
 
