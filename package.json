@@ -7,6 +7,6 @@
     "server"
   ],
   "scripts": {
-    "build": "npm run build --prefix client"
+    "build": "node -e \"const fs=require('fs'),cp=require('child_process'); if(fs.existsSync('client')) cp.execSync('npm run build --prefix client',{stdio:'inherit'}); else if(fs.existsSync('../client')) cp.execSync('npm run build --prefix ../client',{stdio:'inherit'});\""
   }
 }
