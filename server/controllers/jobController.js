@@ -1,16 +1,30 @@
 const multer = require("multer");
 const path = require("path");
+const os = require("os");
+const fs = require("fs");
 const { v4: uuidv4 } = require("uuid");
 const { spawn } = require("child_process");
 const ExcelJS = require("exceljs");
 const Job = require("../models/Job");
+
+// Ensure directory exists or fallback to temp
+const getDir = (sub) => {
+  if (process.env.VERCEL) return os.tmpdir();
+  const dir = path.join(__dirname, "..", sub);
+  try {
+    if (!fs.existsSync(dir)) fs.mkdirSync(dir, { recursive: true });
+    return dir;
+  } catch (e) {
+    return os.tmpdir();
+  }
+};
 
 // ---------------------------------------------------------------------------
 // File upload config (Multer)
 // ---------------------------------------------------------------------------
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
-    cb(null, path.join(__dirname, "..", "uploads"));
+    cb(null, getDir("uploads"));
   },
   filename: (req, file, cb) => {
     const ext = path.extname(file.originalname);
@@ -60,7 +74,7 @@ const uploadJob = async (req, res) => {
 
     const jobId = uuidv4();
     const uploadedPath = req.file.path;
-    const outputPath = path.join(__dirname, "..", "results", `${jobId}.csv`);
+    const outputPath = path.join(getDir("results"), `${jobId}.csv`);
 
     // Create job in DB
     await Job.create({

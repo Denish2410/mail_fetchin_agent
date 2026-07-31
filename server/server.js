@@ -36,18 +36,47 @@ app.get("*", (req, res, next) => {
 });
 
 // ---------------------------------------------------------------------------
-// MongoDB connection & server start
+// MongoDB Connection Helper (Cached for Serverless Environments)
 // ---------------------------------------------------------------------------
-mongoose
-  .connect(MONGO_URI)
-  .then(() => {
-    console.log("✅ MongoDB connected");
-    app.listen(PORT, () => {
-      console.log(`🚀 Server running on http://localhost:${PORT}`);
-    });
-  })
-  .catch((err) => {
+let isConnected = false;
+
+async function connectDB() {
+  if (isConnected || mongoose.connection.readyState >= 1) {
+    isConnected = true;
+    return;
+  }
+
+  try {
+    await mongoose.connect(MONGO_URI);
+    isConnected = true;
+    console.log("✅ MongoDB connected successfully");
+  } catch (err) {
     console.error("❌ MongoDB connection failed:", err.message);
-    console.error("   Make sure MongoDB is running: brew services start mongodb-community");
-    process.exit(1);
-  });
+    throw err;
+  }
+}
+
+// Middleware to ensure DB connection before handling requests
+app.use(async (req, res, next) => {
+  try {
+    await connectDB();
+    next();
+  } catch (err) {
+    res.status(500).json({ error: "Database connection failed: " + err.message });
+  }
+});
+
+// Start standalone server when executed directly (node server.js)
+if (require.main === module) {
+  connectDB()
+    .then(() => {
+      app.listen(PORT, () => {
+        console.log(`🚀 Server running on http://localhost:${PORT}`);
+      });
+    })
+    .catch(() => {
+      process.exit(1);
+    });
+}
+
+module.exports = app;
