@@ -5,8 +5,7 @@
   "main": "server.js",
   "scripts": {
     "start": "node server.js",
-    "dev": "node --watch server.js",
-    "build": "node -e \"const fs=require('fs'),cp=require('child_process'); if(fs.existsSync('client')) cp.execSync('npm run build --prefix client',{stdio:'inherit'}); else if(fs.existsSync('../client')) cp.execSync('npm run build --prefix ../client',{stdio:'inherit'});\""
+    "dev": "node --watch server.js"
   },
   "dependencies": {
     "cors": "^2.8.5",
