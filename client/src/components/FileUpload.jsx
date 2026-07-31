@@ -50,12 +50,18 @@ export default function FileUpload({ onJobStarted }) {
         body: formData,
       });
 
+      const text = await res.text();
+      let data;
+      try {
+        data = JSON.parse(text);
+      } catch (e) {
+        throw new Error(text || `Server error (${res.status})`);
+      }
+
       if (!res.ok) {
-        const data = await res.json();
         throw new Error(data.error || "Upload failed");
       }
 
-      const data = await res.json();
       onJobStarted(data.jobId);
     } catch (err) {
       setError(err.message);
